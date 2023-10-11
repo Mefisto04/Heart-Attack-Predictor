@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Heart Attack Prediction</title>
+</head>
+<style>
+    /* General Styles */
+body {
+    background-color: #121212;
+    color: #ffffff;
+    font-family: Arial, sans-serif;
+}
+
+nav {
+    background-color: #333;
+    padding: 10px 0;
+    position: sticky;
+    top: 0;
+}
+
+nav ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    text-align: center;
+}
+
+nav ul li {
+    display: inline;
+    margin-right: 20px;
+}
+
+nav ul li a {
+    text-decoration: none;
+    color: #ffffff;
+}
+
+/* Form Styles */
+form {
+    text-align: center;
+    margin: 20px;
+}
+
+.input-container {
+    margin: 20px 0;
+}
+
+label {
+    display: block;
+    padding:10px;
+}
+
+input[type="text"] {
+    padding: 10px;
+    border: 1px solid #666;
+    background-color: #333;
+    color: #ffffff;
+    width: 30%;
+    transition: border-color 0.3s, background-color 0.3s;
+}
+
+input[type="text"]:hover {
+    border-color: #fff;
+}
+
+input[type="text"]:focus {
+    border-color: #009688;
+}
+
+.predict-button {
+    background-color: #009688;
+    color: #ffffff;
+    padding: 10px 20px;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.predict-button:hover {
+    background-color: #00766c;
+}
+
+#prediction-result {
+    text-align: center;
+    margin: 20px;
+    font-weight: bold;
+}
+.predict-button {
+    background-color: #009688;
+    color: #ffffff;
+    padding: 10px 20px;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+    margin-top: 20px;
+}
+
+.predict-button:hover {
+    background-color: #00766c;
+    color: #fff;
+}
+
+</style>
+<body>
+    <nav>
+        <ul>
+            <li><a href="/">Home</a></li>
+            <li><a href="map.html" target="_blank">Map</a></li>
+            <li><a href="avatar.html" target="_blank">Contact</a></li>
+        </ul>
+    </nav>
+    <h1>Heart Attack Prediction</h1>
+    <form action="/predict" method="post">
+        <label for="age">Age:</label>
+        <input type="text" name="age" required><br>
+
+        <label for="sex">Sex (0 for female, 1 for male):</label>
+        <input type="text" name="sex" required><br>
+
+        <label for="cp">Chest Pain Type (0-3):</label>
+        <input type="text" name="cp" required><br>
+
+        <label for="trestbps">Resting Blood Pressure:</label>
+        <input type="text" name="trestbps" required><br>
+
+        <label for="chol">Cholesterol:</label>
+        <input type="text" name="chol" required><br>
+
+        <label for="fbs">Fasting Blood Sugar (0 or 1):</label>
+        <input type="text" name="fbs" required><br>
+
+        <label for="restecg">Resting Electrocardiographic Results (0-2):</label>
+        <input type="text" name="restecg" required><br>
+
+        <label for="thalach">Maximum Heart Rate Achieved:</label>
+        <input type="text" name="thalach" required><br>
+
+        <label for="exang">Exercise Induced Angina (0 or 1):</label>
+        <input type="text" name="exang" required><br>
+
+        <label for="oldpeak">ST Depression Induced by Exercise:</label>
+        <input type="text" name="oldpeak" required><br>
+
+        <label for="slope">Slope of the Peak Exercise ST Segment (0-2):</label>
+        <input type="text" name="slope" required><br>
+
+        <label for="ca">Number of Major Vessels Colored by Flouroscopy (0-3):</label>
+        <input type="text" name="ca" required><br>
+
+        <label for="thal">Thalassemia (0-3):</label>
+        <input type="text" name="thal" required><br>
+
+        <input type="submit" value="Predict" class="predict-button">
+    </form>
+    <p id="prediction-result"></p>
+    <script>
+        document.getElementById("predict-button").addEventListener("click", function() {
+            var formData = new FormData(document.getElementById("prediction-form"));
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", "/predict");
+            xhr.send(formData);
+            xhr.onload = function() {
+                if (xhr.status === 200) {
+                    document.getElementById("prediction-result").textContent = xhr.responseText;
+                }
+            };
+        });
+    </script>
+</body>
+</html>

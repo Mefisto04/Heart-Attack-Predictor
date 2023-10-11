@@ -1,0 +1,172 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>City Map Search</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css">
+    <link rel="stylesheet" href="styles2.css">
+</head>
+<body>
+    <div id="input">
+        <label for="cityName">Enter City Name or Coordinates:</label>
+        <input type="text" id="cityName" placeholder="e.g., New York or 40.7128,-74.0060">
+        <button id="searchButton">Search</button>
+    </div>
+    <div id="map" class="map"></div>
+
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script src="script2.js"></script>
+</body>
+</html> -->
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>City Map Search</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css">
+    <style>
+        /* Reset some default styles */
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Set a background color */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+        }
+
+        /* Style the input container */
+        #input {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        label {
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        input[type="text"] {
+            padding: 5px;
+            width: 200px;
+        }
+
+        button {
+            padding: 5px 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        /* Style the map container */
+        .map {
+            height: 400px;
+            width: 80%;
+            max-width: 800px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body>
+    <div id="input">
+        <label for="cityName">Enter City Name or Coordinates:</label>
+        <input type="text" id="cityName" placeholder="e.g., New York or 40.7128,-74.0060">
+        <button id="searchButton">Search</button>
+    </div>
+    <div id="map" class="map"></div>
+    <div id="addMarkerInput">
+        <label for="coordinates">Enter Coordinates to Add Marker:</label>
+        <input type="text" id="coordinates" placeholder="e.g., 51.5074, -0.1278">
+        <button id="addMarker">Add Marker</button>
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script>
+        // Initialize the map
+        var map = L.map('map').setView([0, 0], 2);
+
+        // Add an OpenStreetMap tile layer
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+        }).addTo(map);
+
+        // Function to search for and display a city on the map
+        function searchCity() {
+            var input = document.getElementById('cityName').value;
+            var coordinates = input.split(',').map(function (coord) {
+                return parseFloat(coord.trim());
+            });
+
+            if (coordinates.length === 2 && !isNaN(coordinates[0]) && !isNaN(coordinates[1])) {
+                // If input is coordinates (latitude, longitude)
+                map.setView(coordinates, 10);
+            } else {
+                // If input is a city name
+                var url = 'https://nominatim.openstreetmap.org/search?format=json&q=' + input;
+                fetch(url)
+                    .then(function (response) {
+                        return response.json();
+                    })
+                    .then(function (data) {
+                        if (data.length > 0) {
+                            var lat = parseFloat(data[0].lat);
+                            var lon = parseFloat(data[0].lon);
+                            map.setView([lat, lon], 10);
+                        } else {
+                            alert('City not found. Please enter a valid city name or coordinates.');
+                        }
+                    })
+                    .catch(function (error) {
+                        console.error('Error:', error);
+                    });
+            }
+        }
+
+        // Event listener for the "Search" button
+        document.getElementById('searchButton').addEventListener('click', searchCity);
+
+        // Function to add a marker to the map
+        function addMarker() {
+            var input = document.getElementById('coordinates').value;
+            var coordinates = input.split(',').map(function (coord) {
+                return parseFloat(coord.trim());
+            });
+
+            if (coordinates.length === 2 && !isNaN(coordinates[0]) && !isNaN(coordinates[1])) {
+                var marker = L.marker(coordinates).addTo(map);
+                marker.bindPopup('Coordinates: ' + coordinates.join(', ')).openPopup();
+            } else {
+                alert('Invalid coordinates. Please enter valid Latitude and Longitude.');
+            }
+        }
+
+        // Event listener for the "Add Marker" button
+        document.getElementById('addMarker').addEventListener('click', addMarker);
+
+        // Update map center on window resize to maintain proper centering
+        window.addEventListener('resize', function () {
+            map.invalidateSize();
+        });
+    </script>
+</body>
+</html>
+
+
+
